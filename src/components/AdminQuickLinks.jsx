@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const AdminQuickLinks = () => {
+  const navigate = useNavigate();
+
   return (
     <div>
       <h2 className="text-4xl text-gray-800 text-center mb-3">Quick links</h2>
@@ -19,7 +22,7 @@ const AdminQuickLinks = () => {
             Store information
           </button>
           <button className="w-full cursor-pointer px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-            Tax Reports
+            Billing Reports
           </button>
         </div>
       </div>

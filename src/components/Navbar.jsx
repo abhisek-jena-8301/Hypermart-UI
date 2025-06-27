@@ -34,22 +34,8 @@ const Navbar = () => {
         <Link to={homePath} className="text-lg font-semibold">
           HyperMart
         </Link>
-
-        {/* Links */}
-        <div className="flex space-x-6">
-          {/* <Link to="/" className="hover:text-gray-200">
-            Home
-          </Link>
-          <Link to="/about" className="hover:text-gray-200">
-            About
-          </Link>
-          <Link to="/login" className="hover:text-gray-200">
-            Login
-          </Link>
-          <Link to="/register" className="hover:text-gray-200">
-            Register
-          </Link> */}
-        </div>
+        {/* Links
+        <div className="flex space-x-6"></div> */}
         <div
           className="relative"
           onMouseEnter={() => setIsDropdownOpen(true)}

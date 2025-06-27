@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { register } from "../service/authApi.js";
 import { useEffect } from "react";
-import { fetchUserDetails } from "../service/authApi.js";
+import { fetchUserDetails } from "../service/userProfileServiceApi.js";
 import UpdateConfirmationDialog from "./dialog/UpdateConfirmationDialog.jsx";
 
 const ViewProfileDetails = () => {
@@ -112,7 +112,6 @@ const ViewProfileDetails = () => {
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                   className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Enter first name"
                   required
                 />
               </div>
@@ -125,7 +124,6 @@ const ViewProfileDetails = () => {
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                   className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Enter last name"
                 />
               </div>
               {/* address */}
@@ -137,7 +135,6 @@ const ViewProfileDetails = () => {
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Enter your address"
                   required
                 />
               </div>
@@ -152,7 +149,6 @@ const ViewProfileDetails = () => {
                   value={mobileNo}
                   onChange={(e) => setMobileNo(e.target.value)}
                   className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Enter your mobile no."
                   required
                 />
               </div>
@@ -164,7 +160,6 @@ const ViewProfileDetails = () => {
                   value={emailId}
                   onChange={(e) => setEmailId(e.target.value)}
                   className="w-full p-2 border rounded mt-2 pr-10 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  placeholder="Enter your email id"
                   required
                 />
               </div>
