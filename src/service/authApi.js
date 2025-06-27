@@ -96,8 +96,3 @@ export const verify2FA = async (otp) => {
   );
 };
 
-export const fetchUserDetails = async () => {
-  return await authApi.get("/fetchUserDetails", {
-    withCredentials: true,
-  });
-};
