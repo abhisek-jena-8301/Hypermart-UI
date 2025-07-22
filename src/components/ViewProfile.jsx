@@ -3,7 +3,10 @@ import { toast } from "react-toastify";
 import { Eye, EyeOff, Info } from "lucide-react";
 import { register } from "../service/authApi.js";
 import { useEffect } from "react";
-import { fetchUserDetails } from "../service/userProfileServiceApi.js";
+import {
+  fetchUserDetails,
+  updateUserDetails,
+} from "../service/userProfileServiceApi.js";
 import UpdateConfirmationDialog from "./dialog/UpdateConfirmationDialog.jsx";
 
 const ViewProfileDetails = () => {
@@ -14,6 +17,7 @@ const ViewProfileDetails = () => {
   const [address, setAddress] = useState("");
   const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   const [showDialog, setShowDialog] = useState(false);
   const [originalData, setOriginalData] = useState({});
 
@@ -42,8 +46,17 @@ const ViewProfileDetails = () => {
 
   const confirmUpdate = async () => {
     setShowDialog(false);
-    console.log("Proceeding with update...");
-    //TODO:  Add your update API call here
+    console.log("Proceeding with update userId : " + userId);
+    const updateMsg = await updateUserDetails(
+      firstName,
+      lastName,
+      mobileNo,
+      emailId,
+      address,
+      userId
+    );
+    console.log(updateMsg.data);
+    toast.success(updateMsg.data.message);
   };
 
   const cancelUpdate = () => {
@@ -60,6 +73,7 @@ const ViewProfileDetails = () => {
 
         console.log("Fetched user data:", data);
 
+        setUserId(data.userId);
         setFirstName(data.first_name || "");
         setLastName(data.last_name || "");
         setMobileNo(data.contact || "");

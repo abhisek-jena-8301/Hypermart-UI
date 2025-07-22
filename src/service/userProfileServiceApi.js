@@ -5,3 +5,21 @@ export const fetchUserDetails = async () => {
     withCredentials: true,
   });
 };
+
+export const updateUserDetails = async (
+  firstName,
+  lastName,
+  mobileNo,
+  emailId,
+  address,
+  userId
+) => {
+  console.log("APi call here");
+  return await userServiceApi.put(
+    "/updateUserProfile",
+    { firstName, lastName, mobileNo, emailId, address, userId },
+    {
+      withCredentials: true,
+    }
+  );
+};
