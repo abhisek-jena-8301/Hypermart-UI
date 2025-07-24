@@ -11,6 +11,7 @@ import LayoutWithNavbar from "./components/LayoutWithNavbar.jsx";
 import EmployeeHomePage from "./pages/EmployeeHomePage.jsx";
 import Home from "./pages/HomePage.jsx";
 import ViewProfile from "./pages/ViewProfilePage.jsx";
+import EmployeeListPage from "./pages/EmployeeListPage.jsx";
 
 const router = createBrowserRouter([
   { path: "/login", element: <LoginPage />, errorElement: <Error /> },
@@ -37,6 +38,11 @@ const router = createBrowserRouter([
           {
             path: "/view-profile",
             element: <ViewProfile />,
+            errorElement: <Error />,
+          },
+          {
+            path: "/emp-list",
+            element: <EmployeeListPage />,
             errorElement: <Error />,
           },
         ],

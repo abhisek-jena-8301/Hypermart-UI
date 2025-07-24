@@ -17,6 +17,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     try {
       const { data } = await loginUser(username, password);
       console.log("Data from api call : ", data);
+      //TODO: make changes as per login api response
       if (data) {
         handleStateValuesRemoval();
         onLoginSuccess(data);
@@ -26,7 +27,7 @@ const LoginForm = ({ onLoginSuccess }) => {
       }
     } catch (error) {
       console.log("Error during login: ", error);
-      toast.error("Oh no something went wrong!! ");
+      toast.error("Invalid Login Credentials");
       handleStateValuesRemoval();
     }
   };
@@ -82,7 +83,7 @@ const LoginForm = ({ onLoginSuccess }) => {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-[42px] text-[#213448]"
-            > 
+            >
               {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
             </button>
           </div>
