@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "../context/SessionContext.jsx";
-import { logoutUser } from "../service/authApi.js";
+import { useSession } from "../../context/SessionContext.jsx";
+import { logoutUser } from "../../service/authApi.js";
 
 const EmployeeHomePage = () => {
   return (

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "../context/SessionContext.jsx";
-import { logoutUser } from "../service/authApi.js";
-import AdminQuickLinks from "../components/AdminQuickLinks.jsx";
+import { useSession } from "../../context/SessionContext.jsx";
+import { logoutUser } from "../../service/authApi.js";
+import AdminQuickLinks from "../../components/admin/AdminQuickLinks.jsx";
 
 const AdminHomePage = () => {
   const [username, setUsername] = useState("");

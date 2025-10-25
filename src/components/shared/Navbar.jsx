@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useSession } from "../context/SessionContext.jsx";
-import { logoutUser } from "../service/authApi.js";
+import { useSession } from "../../context/SessionContext.jsx";
+import { logoutUser } from "../../service/authApi.js";
 import { FaUserCircle } from "react-icons/fa";
 import { useState } from "react";
 import Cookies from "js-cookie";

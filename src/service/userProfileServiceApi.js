@@ -33,6 +33,17 @@ export const fetchEmployeeList = async (page = 1, limit = 25) => {
   });
 };
 
+export const fetchEmployeeListByName = async (name, page = 1, limit = 25) => {
+  return await empServiceApi.get("/fetchUserByName", {
+    params: {
+      page,
+      limit,
+      name,
+    },
+    withCredentials: true,
+  });
+};
+
 export const fetchEmployeeListByCondition = async (
   departments = [],
   statuses = []
@@ -42,7 +53,7 @@ export const fetchEmployeeListByCondition = async (
     departments: departments.join(","),
     statuses: statuses.join(","),
   };
-  return await empServiceApi.get("/fetchEmpListCondition", {
+  return await empServiceApi.get("/fetchUserListByCondition", {
     params,
     withCredentials: true,
   });

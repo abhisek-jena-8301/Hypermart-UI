@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import TwoFAVerification from "../components/TwoFAVerification";
+import TwoFAVerification from "../../components/general/TwoFAVerification.jsx";
 
 const Verify2FA = () => {
   const navigate = useNavigate();

@@ -9,6 +9,11 @@ const AdminQuickLinks = () => {
     navigate("/emp-list");
   };
 
+  const routeToInventoryPage = () => {
+    console.log("Routing to inventory page");
+    navigate("/inventory");
+  };
+
   return (
     <div>
       <h2 className="text-4xl text-gray-800 text-center mb-3">Quick links</h2>
@@ -21,7 +26,10 @@ const AdminQuickLinks = () => {
           >
             Employee List
           </button>
-          <button className="w-full cursor-pointer px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
+          <button
+            className="w-full cursor-pointer px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+            onClick={routeToInventoryPage}
+          >
             Inventory Control
           </button>
         </div>

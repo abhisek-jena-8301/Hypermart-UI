@@ -1,6 +1,6 @@
 import React from "react";
-import LoginForm from "../components/LoginForm";
-import { useSession } from "../context/SessionContext";
+import LoginForm from "../../components/General/LoginForm.jsx";
+import { useSession } from "../../context/SessionContext.jsx";
 import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {

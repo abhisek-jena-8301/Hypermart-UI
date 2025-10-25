@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { loginUser } from "../service/authApi.js";
+import { loginUser } from "../../service/authApi.js";
 import { toast } from "react-toastify";
 import { Eye, EyeOff } from "lucide-react";
 

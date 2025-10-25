@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { setup2FA } from "../service/authApi.js";
+import { setup2FA } from "../../service/authApi.js";
 import { toast } from "react-toastify";
 
 const TwoFASetup = ({ onSetupComplete }) => {

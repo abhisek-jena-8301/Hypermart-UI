@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
-import EmployeeDetailCard from "../components/EmployeeDetailCard.jsx";
+import EmployeeDetailCard from "../../components/employee/EmployeeDetailCard.jsx";
 import {
   fetchEmployeeList,
   fetchEmployeeListByCondition,
-} from "../service/userProfileServiceApi.js";
+  fetchEmployeeListByName,
+} from "../../service/userProfileServiceApi.js";
 import { Search } from "lucide-react";
-import FilterDialogBox from "../components/dialog/FilterDialogBox.jsx";
+import FilterDialogBox from "../../components/dialog/FilterDialogBox.jsx";
+import EmployeeViewDetails from "../../components/employee/EmployeeViewDetails.jsx";
+import UpdateConfirmationDialog from "../../components/dialog/UpdateConfirmationDialog.jsx";
 
 function EmployeeListPage() {
   const [isHovered, setIsHovered] = useState(false);
@@ -13,6 +16,9 @@ function EmployeeListPage() {
   const [users, setUsers] = useState([]);
   const [filterDialogbox, setFilterDialogBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [employeeDetail, setEmployeeDetail] = useState(false);
+  const [srDialogBox, setSrDialogbox] = useState(false); //Suspend resume dialog box
+  const [selectedStatus, setSelectedStatus] = useState(false); //selected user status for Suspension/Resume
   // const [totalCount, setTotalCount] = useState(0);
 
   /** Pagination logic */
@@ -26,30 +32,47 @@ function EmployeeListPage() {
     currentPage * PAGE_SIZE
   );
 
-  /** Handle view,edit and Delete functions */
+  /** Handle view related functions */
   //TODO: implement all the functionalities
   const handleView = () => {
     console.log("HandleView");
+    setEmployeeDetail(true);
   };
+
+  const handleGoBack = () => {
+    console.log("here onGoBack");
+    setEmployeeDetail(false);
+  };
+
   const handleDelete = () => {
     console.log("HandleDelete");
   };
   const handleEdit = () => {
     console.log("HandleEdit");
   };
-  const handleSuspendResume = async (userId, status) => {
+
+  /** Handle suspend and resume related functions  */
+  const showSuspendResume = async (userId, status) => {
+    console.log("Show SR ", userId, " ", status);
+    setSelectedStatus(status);
+    setSrDialogbox(true);
+  };
+
+  const handleSuspendResume = () => {
     console.log("handleSuspendResume");
-    console.log(userId, " ", status);
+    setSrDialogbox(false);
   };
 
-  /** Search function */
-  const onSearch = (query) => {
-    console.log("Here in onSearch() function query: " + query);
+  const handleCancelSR = () => {
+    console.log("here handlecancelSR");
+    setSrDialogbox(false);
   };
 
-  const handleSubmit = (e) => {
+  /** Search button  */
+  const handleSearchSubmit = async (e) => {
     e.preventDefault();
-    onSearch(query);
+    const updatedList = await fetchEmployeeListByName(query);
+    setUsers(updatedList);
   };
 
   /**  Filter dialog box functions */
@@ -61,17 +84,28 @@ function EmployeeListPage() {
     setFilterDialogBox(false);
     if (!filterData) return;
     let departments = filterData.departments || [];
-    let statuses = filterData.statuses || [];
+    const STATUS_MAP = {
+      Active: "A",
+      Unverified: "U",
+      Suspended: "S",
+    };
+
+    let statuses = (filterData.statuses || []).map(
+      (status) => STATUS_MAP[status]
+    );
+
     console.log("department: ", departments, " statuses : ", statuses);
+
     if (!(departments.length == 4 && statuses.length == 3)) {
       const response = await fetchEmployeeListByCondition(
         departments,
         statuses
       );
-      const list = response.data.list;
-      console.log(list);
+      const list = response.data.users;
+      console.log(response.data);
       if (!list || list.length === 0) {
         console.log("Empty list or list not there");
+        setUsers([]);
       } else setUsers(list);
     }
   };
@@ -126,7 +160,7 @@ function EmployeeListPage() {
 
             {isHovered && (
               <form
-                onSubmit={handleSubmit}
+                onSubmit={handleSearchSubmit}
                 className="transition-all duration-500 ease-in-out w-56"
               >
                 <div className="relative">
@@ -183,7 +217,7 @@ function EmployeeListPage() {
               onView={handleView}
               onDelete={handleDelete}
               onEdit={handleEdit}
-              onToggleStatus={handleSuspendResume}
+              onToggleStatus={showSuspendResume}
             />
           ))
         )}
@@ -222,6 +256,19 @@ function EmployeeListPage() {
         <FilterDialogBox
           onConfirm={handleFilterConfirmation}
           onCancel={handleFilterCancellation}
+        />
+      )}
+      {/* EmployeeDetailView */}
+      {employeeDetail && <EmployeeViewDetails onGoBack={handleGoBack} />}
+
+      {/*Suspend/Resume Dialog box */}
+      {srDialogBox && (
+        <UpdateConfirmationDialog
+          message={`Do you want to ${
+            selectedStatus === "A" ? "suspend" : "resume"
+          } the user?`}
+          onConfirm={handleSuspendResume}
+          onCancel={handleCancelSR}
         />
       )}
     </div>

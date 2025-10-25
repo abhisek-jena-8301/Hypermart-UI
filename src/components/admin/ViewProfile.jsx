@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import { Eye, EyeOff, Info } from "lucide-react";
-import { register } from "../service/authApi.js";
+import { register } from "../../service/authApi.js";
 import { useEffect } from "react";
 import {
   fetchUserDetails,
   updateUserDetails,
-} from "../service/userProfileServiceApi.js";
-import UpdateConfirmationDialog from "./dialog/UpdateConfirmationDialog.jsx";
+} from "../../service/userProfileServiceApi.js";
+import UpdateConfirmationDialog from "../dialog/UpdateConfirmationDialog.jsx";
 
 const ViewProfileDetails = () => {
   const [firstName, setFirstName] = useState("");
