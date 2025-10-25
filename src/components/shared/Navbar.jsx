@@ -12,7 +12,7 @@ const Navbar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, logout } = useSession();
 
-  const role = Cookies.get("role");
+  const role = sessionStorage.getItem("role");
   const homePath =
     role === "Admin" ? "/admin-home" : role === "Employee" ? "/emp-home" : "/";
 

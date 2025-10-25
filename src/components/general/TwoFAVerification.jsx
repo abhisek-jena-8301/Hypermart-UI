@@ -10,6 +10,7 @@ const TwoFAVerification = ({ onVerifySuccess, onResetSuccess }) => {
     e.preventDefault();
     try {
       const { data } = await verify2FA(otp);
+      sessionStorage.setItem("role", data.role);
       toast.success("Login Successfull!!");
       onVerifySuccess(data);
     } catch (error) {
