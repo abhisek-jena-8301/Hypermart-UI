@@ -1,8 +1,3 @@
-export const AUTH_SERVICE_URL = "http://localhost:7001/auth";
-export const USER_SERVICE_URL = "http://localhost:7711/user";
-export const EMPLOYEE_SERVICE_URL = "http://localhost:7711/emp";
-export const PRODUCT_SERVICE_URL = "http://localhost:7121/product";
-
 export const categoryOptions = [
   { label: "Fruits & Vegetables", value: "Fruits & Vegetables" },
   { label: "Dairy & Eggs", value: "Dairy & Eggs" },
@@ -46,3 +41,5 @@ export const categoryOptions = [
 export const NAME_REGEX = /^[A-Za-z0-9 ]{2,50}$/;
 export const COMPANY_NAME_REGEX = /^[A-Za-z0-9&. ]{2,50}$/;
 export const PRICE_REGEX = /^\d+(\.\d{1,2})?$/;
+
+export const QR_FILE_NAME = "_QR.jpg";
