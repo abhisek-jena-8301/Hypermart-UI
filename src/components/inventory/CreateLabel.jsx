@@ -6,8 +6,11 @@ import {
   COMPANY_NAME_REGEX,
   NAME_REGEX,
   PRICE_REGEX,
+  QR_FILE_NAME,
 } from "../../constants";
-import { addProduct } from "../../service/inventoryApi.js";
+import { addProduct, createQR } from "../../service/inventoryApi.js";
+import { motion, AnimatePresence } from "framer-motion";
+import { sendQRMail } from "../../service/userProfileServiceApi.js";
 
 const CreateLabel = () => {
   const [productName, setProductName] = useState("");
@@ -16,6 +19,11 @@ const CreateLabel = () => {
   const [companyName, setCompanyName] = useState("");
   const [remarks, setRemarks] = useState("");
   const [isPerishable, setIsPerishable] = useState(false);
+  // const [storeId, setStoreId] = useState("");
+  const [firstResponse, setFirstResponse] = useState("");
+  const [isReady, setIsReady] = useState(false);
+  const [qrCode, setQRCode] = useState("");
+  const [productCode, setProductCode] = useState("");
 
   const handleStateValuesRemoval = () => {
     setProductName("");
@@ -66,37 +74,108 @@ const CreateLabel = () => {
     return true;
   };
 
-  const generateQR = async () => {
-    console.log("In generateQR function");
+  const createFileName = () => {
+    const date = Date.now();
+    console.log(date);
+    const fileName = productCode + "_" + date + QR_FILE_NAME;
+    return fileName;
   };
 
-  const handleSubmission = async (e) => {
+  const handleDownload = () => {
+    try {
+      if (!qrCode) {
+        toast.error("No QR code available to download!");
+        return;
+      }
+
+      // Create a temporary link element
+      const link = document.createElement("a");
+      link.href = qrCode; // This should be your base64 image data (e.g., "data:image/png;base64,...")
+      link.download = createFileName();
+      //link.download = "product_qrcode.jpg"; // Desired file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      console.log("QR Code download started.");
+    } catch (error) {
+      console.error("Error while downloading QR code:", error);
+    }
+  };
+
+  const handleSendEmail = async (e) => {
     e.preventDefault();
-    console.log("here inside handleSubmission");
+    console.log("Inside the handleSendEmail");
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const username = user?.username;
+    try {
+      const { data } = await sendQRMail(qrCode, username);
+      if (data) {
+        toast.success(data.message);
+      }
+    } catch (error) {
+      console.log("Error at send Email: ", error);
+      toast.error("Email couldn't be sent with QR details");
+    }
+  };
+
+  const handleFormSubmission = async (e) => {
+    e.preventDefault();
+    console.log("here inside handleFormSubmission");
     if (validateInputFields() == true) {
       try {
-        const { data } = await addProduct(
-          productName,
-          price,
-          category,
-          companyName,
-          remarks,
-          isPerishable
-        );
+        const { data } = await createQR(productName, price);
         console.log("data: ", data);
         if (data) {
-          await generateQR(data.productId);
-          handleStateValuesRemoval();
+          setProductCode(data.productCode);
+          setQRCode(data.qrCode);
+          setFirstResponse(true);
+          // toast.success(data.message);
+          //   handleStateValuesRemoval();
         } else {
-          toast.error("Product couldn't be added. Please try again.");
+          toast.error(
+            "QR code couldn't be generated for the product. Please try again."
+          );
           handleStateValuesRemoval();
         }
       } catch (error) {
-        console.log("Error at handleSubmission : ", error);
+        console.log("Error at handleFormSubmission : ", error);
         toast.error(error.response.data.message);
       }
     } else {
       handleStateValuesRemoval();
+    }
+  };
+
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    console.log("inside handleAddProduct");
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const username = user?.username;
+    try {
+      const { data } = await addProduct(
+        productName,
+        productCode,
+        price,
+        category,
+        companyName,
+        remarks,
+        isPerishable,
+        qrCode,
+        username
+      );
+      console.log("data at handleAddProduct : ", handleAddProduct);
+      if (data) {
+        setIsReady(true);
+        toast.success(data.message);
+        handleStateValuesRemoval();
+      } else {
+        toast.error("Couldn't add product, Please try again");
+        handleStateValuesRemoval();
+      }
+    } catch (error) {
+      console.log("Error at handleAddProduct");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -106,17 +185,15 @@ const CreateLabel = () => {
   };
 
   return (
-    <div className="h-full flex">
-      <div className="w-1/2 mr-3 pr-3 pl-3 h-full">
+    <div className="flex items-stretch">
+      <div className="w-1/2 mr-3 pr-3 pl-3">
         <form
-          onSubmit={handleSubmission}
+          onSubmit={handleFormSubmission}
           action=""
-          className="bg-white rounded-lg shadow-lg w-full mx-auto p-4 flex-col items-center justify-center"
+          className="bg-white rounded-lg shadow-lg w-full h-full mx-auto p-4 flex-col items-center justify-center"
         >
           <div className="pt-3">
-            <h2 className="text-3xl text-center font-extralight text-[#213448]">
-              Add product
-            </h2>
+            <h2 className="text-3xl text-center text-[#213448]">Add product</h2>
           </div>
           <hr className="text-gray-200 mt-6 mb-6" />
           {/* Product name field*/}
@@ -129,6 +206,7 @@ const CreateLabel = () => {
               onChange={(e) => setProductName(e.target.value)}
               className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
               placeholder="Enter product name"
+              disabled={!!firstResponse}
               required
             />
           </div>
@@ -143,6 +221,7 @@ const CreateLabel = () => {
                 onChange={(e) => setPrice(e.target.value)}
                 className="w-full p-2 border rounded mt-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 placeholder="Enter price"
+                disabled={!!firstResponse}
                 required
               />
             </div>
@@ -158,6 +237,7 @@ const CreateLabel = () => {
                   options={categoryOptions}
                   placeholder="Select or search category..."
                   isClearable
+                  disabled={!!firstResponse}
                   classNamePrefix="react-select"
                   styles={{
                     control: (base, state) => ({
@@ -203,6 +283,7 @@ const CreateLabel = () => {
             <textarea
               label="Remarks"
               value={remarks}
+              disabled={!!firstResponse}
               placeholder="Enter remarks (max. 50 characters)"
               rows="3"
               onChange={(e) => {
@@ -218,6 +299,7 @@ const CreateLabel = () => {
               id="isPerishable"
               checked={isPerishable}
               onChange={(e) => setIsPerishable(e.target.checked)}
+              disabled={!!firstResponse}
               className="h-4 w-4 mt-2 accent-[#213448] cursor-pointer border-gray-300 rounded focus:bg-[#213448]"
             />
             <label
@@ -233,11 +315,81 @@ const CreateLabel = () => {
             type="submit"
             className="w-full bg-[#213448] text-white py-2 mt-2 rounded-md cursor-pointer hover:bg-[#2b4560] transition"
           >
-            Add
+            Generate QR
           </button>
         </form>
       </div>
-      <div className="w-1/2 ml-3">Here</div>
+      <AnimatePresence>
+        {firstResponse && (
+          <motion.div
+            className="w-1/2 h-full ml-3 bg-white rounded-lg shadow-lg mx-auto p-4 flex-col items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <h2 className="mt-3 mb-3 text-xl text-center font-bold text-[#213448]">
+              Generated label
+            </h2>
+            <p className="text-md text-center mt-4 text-gray-700">
+              Succesfully generated the label for {productName} : {companyName}
+            </p>
+            <p className="text-md text-center mt-2 text-gray-700">
+              Get your new label — download, print, or send it by email.
+            </p>
+            <div className="p-6">
+              <div className="flex justify-center">
+                <img
+                  src={qrCode ? qrCode : ""}
+                  alt="Product label"
+                  className="mb-4 border rounded-md"
+                />
+              </div>
+            </div>
+
+            <div className="flex">
+              <button
+                type="submit"
+                onClick={handleAddProduct}
+                disabled={isReady}
+                className="w-full relative bg-[#213448] text-white py-2 mt-2 rounded-md cursor-pointer hover:bg-[#2b4560] transition"
+              >
+                Proceed to Add Product
+              </button>
+            </div>
+            <div className="flex space-x-3">
+              <button
+                type="submit"
+                onClick={handleDownload}
+                disabled={!isReady}
+                className={`w-1/2 relative py-2 mt-2 rounded-md transition
+                ${
+                  isReady
+                    ? "bg-[#213448] text-white hover:bg-[#2b4560] cursor-pointer"
+                    : "bg-gray-400 text-gray-200 cursor-not-allowed opacity-60"
+                }
+                `}
+              >
+                Download
+              </button>
+
+              <button
+                type="submit"
+                disabled={!isReady}
+                onClick={handleSendEmail}
+                className={`w-1/2 relative py-2 mt-2 rounded-md transition
+                ${
+                  isReady
+                    ? "bg-[#213448] text-white hover:bg-[#2b4560] cursor-pointer"
+                    : "bg-gray-400 text-gray-200 cursor-not-allowed opacity-60"
+                }
+                `}
+              >
+                Send email
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

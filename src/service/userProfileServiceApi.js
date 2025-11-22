@@ -58,3 +58,12 @@ export const fetchEmployeeListByCondition = async (
     withCredentials: true,
   });
 };
+
+export const sendQRMail = async (qrCode, user) => {
+  console.log("Inside sendQRMail");
+  return await userServiceApi.post(
+    "/sendQRMail",
+    { qrCode, user },
+    { withCredentials: true }
+  );
+};
